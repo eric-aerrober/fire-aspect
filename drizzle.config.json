@@ -1,0 +1,8 @@
+{
+    "schema": "./src/database/apis/*_table.ts",
+    "out": "./drizzle",
+    "dbCredentials": {
+        "url": "./data/database.db"
+    },
+    "driver": "better-sqlite"
+}

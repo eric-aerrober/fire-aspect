@@ -1,0 +1,6 @@
+node_modules
+data
+dist-electron
+.results
+scripts
+workspace

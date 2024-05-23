@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+.tremor-TableHeaderCell-root {
+  padding: 8px;
+}
+
+// remaining markdown styles
+
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+ul {
+  list-style-type: disc;
+  margin: 1.5rem;
+}
+
+li {
+  margin: 0.5rem 0;
+}
+
+ol {
+  list-style-type: decimal;
+  margin: 1.5rem;
+}
+
+code {
+  font-family: 'Fira Code', monospace;
+}
+
+pre {
+  font-family: 'Fira Code', monospace;
+  background-color: #f8f8f8;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 0.5rem 0;
+  border: 1px solid #e1e4e8;
+}
+
+a {
+  color: #0070f3;
+}
+
+a:hover {
+  color: #0366d6;
+}
+
+blockquote {
+  border-left: 2px solid #e1e4e8;
+  padding: 0 15px;
+  margin: 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  border-bottom: 2px solid #e1e4e8;
+}
+
+td {
+  border-bottom: 1px solid #e1e4e8;
+}
+
+img {
+  max-width: 100%;
+}
+
+

@@ -57,10 +57,12 @@ export class ExecutionContext<StoredState> {
                 resultHistory.push(message)
             }
             else if (lastIsAgent && message.sender == 'agent') {
-                resultHistory[resultHistory.length - 1].message += '\n' + message.message
+                resultHistory.push({sender: 'user', message: '[message blank]'})
+                resultHistory.push(message)
             }
             else if (!lastIsAgent && message.sender == 'user') {
-                resultHistory[resultHistory.length - 1].message += '\n' + message.message
+                resultHistory.push({sender: 'agent', message: '[message blank]'})
+                resultHistory.push(message)
             }
             else {
                 resultHistory.push(message)
@@ -113,6 +115,14 @@ export class ExecutionContext<StoredState> {
         await DB.events.update({
             id: this.rootEvent.id,
             status: Status.SUCCESS
+        })
+    }
+
+    public async failContext (message: string) {
+        await DB.events.update({
+            id: this.rootEvent.id,
+            status: Status.ERROR,
+            statusMessage: message
         })
     }
 

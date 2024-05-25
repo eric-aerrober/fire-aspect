@@ -13,9 +13,18 @@ export class ExecutionNode <InputExecutionState, OutputExecutionState> {
 
     public async invoke (context: ExecutionContext<InputExecutionState>) : Promise<ExecutionContext<OutputExecutionState>> {
         const executionContext = await context.childContext(this.type);
-        const invokedInternal = await this.invokeInternal(executionContext);
-        await executionContext.completeContext();
-        return invokedInternal;
+
+        try {
+            const invokedInternal = await this.invokeInternal(executionContext);
+            await executionContext.completeContext();
+            return invokedInternal;
+        } catch (e) {
+            if (e instanceof Error) {
+                await executionContext.failContext(e.message + '\n' + e.stack);
+                await context.failContext("Child node failed unrecoverably");
+            }
+            throw new Error('Child node failed unrecoverably');
+        }
     }
 
     protected async invokeInternal (context: ExecutionContext<InputExecutionState>) : Promise<ExecutionContext<OutputExecutionState>> {

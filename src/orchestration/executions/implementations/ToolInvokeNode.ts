@@ -31,6 +31,8 @@ export class ToolInvokeExecutionNode extends ExecutionNode<ToolInvokeExecutioNod
         const input = `${wsString}/input.json`
         const result = `${wsString}/result.json`
 
+        await context.recordRelatedRecord(context.state.toolId)
+
         fs.mkdirSync(wsString, { recursive: true })
         fs.writeFileSync(input, JSON.stringify({
             toolId: context.state.toolId,
@@ -43,7 +45,6 @@ export class ToolInvokeExecutionNode extends ExecutionNode<ToolInvokeExecutioNod
         }
 
         const toolResult = JSON.parse(fs.readFileSync(result).toString())
-
         await context.completeWithData(wsString)
         return context.mergeState({toolResult})
 

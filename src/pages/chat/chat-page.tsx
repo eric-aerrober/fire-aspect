@@ -12,7 +12,9 @@ import { AgentIcon } from "../../components/logos/robot";
 function renderConversations (conversations: ConversationTableElement[] ) {
 
     const chatIcon = Chat
-    const agentIcon = AgentIcon
+    const agentIcon = () => <div className="w-6 h-6 -translate-y-1">
+        <AgentIcon/>
+    </div>
 
     return <>
         <br/>

@@ -31,7 +31,7 @@ export class AgentRunsExecutionNode extends ExecutionNode<AgentRespondExecutionN
             ${describeTools(context.tools)}
 
         
-            I am now asking that select a tool for us to use in order to solve this problem. Please respond with valid json in the below format:
+            I am now asking that select a tool for us to use in order to solve this problem. Please respond with valid pretty json in the below format:
 
             {
                 "problem": "you own description of the problem we are trying to solve",

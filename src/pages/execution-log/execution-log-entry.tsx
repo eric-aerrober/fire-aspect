@@ -28,6 +28,8 @@ export function ExecutionLogEntry (props: ExecutionLogEntryProps) {
         children: props.event?.content,
         parentId: props.topLevel && props.event?.id,
         childEvents: !props.topLevel && props.children,
+        status: props.event?.status,
+        statusMessage: props.event?.statusMessage
     }
 
     if (type === 'conversations') {
@@ -77,7 +79,7 @@ export function ExecutionLogEntry (props: ExecutionLogEntryProps) {
     if (event.type == EventType.TOOL_INVOKE) {
         return <ExecutionLogScalfold
             {...baseProps}
-            title="Tool Invoked"
+            title={"Tool Invoke"}
             icon={<Tool />}
         />
     }

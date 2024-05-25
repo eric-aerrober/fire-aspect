@@ -35,7 +35,12 @@ export function fixFormatting (str: string): string {
 }
 
 export function extractObject (str: string) {
-    const start = str.indexOf('{');
-    const end = str.lastIndexOf('}');
-    return JSON.parse(str.substring(start, end + 1));
+    try {
+        const start = str.indexOf('{');
+        const end = str.lastIndexOf('}');
+        return JSON.parse(str.substring(start, end + 1));
+    }
+    catch {
+        return undefined;
+    }
 }

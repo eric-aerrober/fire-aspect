@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { EventTableElement } from "../../database/apis/events_table";
 import ArrowRightIcon from 'remixicon-react/ArrowRightSLineIcon'
 import ArrowLeftIcon from 'remixicon-react/ArrowLeftSLineIcon'
+import { Status } from "../../database/enums";
 
 export interface ExecutionLogScalfoldProps {
     id: string
@@ -12,6 +13,8 @@ export interface ExecutionLogScalfoldProps {
     childEvents?: EventTableElement[]
     icon: ReactNode
     parentId?: string
+    status?: string
+    statusMessage?: string
     onClick?: () => void
 }
 
@@ -19,18 +22,24 @@ export function ExecutionLogScalfold (props: ExecutionLogScalfoldProps) {
 
     const {id} = useParams()
     const isSelected = id === props.id
-    const hasChildren = !!props.children
+    const hasChildren = !!props.children || !!props.statusMessage
     const hasChildEvents = props.childEvents && props.childEvents.length > 0
     const hasParent = !!props.parentId && props.parentId.startsWith('events')
     const isClickable = !!props.onClick
     const nav = useNavigate()
 
+    const isInProgress = props.status === Status.INPROGRESS
+    const isFailed = props.status === Status.ERROR
+    const isSuccess = props.status === Status.SUCCESS
+
     return <>
         <div className={
-                `p-4 bg-white border mt-8 relative hover:bg-gray-50 hover:ring-1 ring-indigo-300 `
+                `p-4  border mt-8 relative hover:bg-gray-50 hover:ring-1 ring-indigo-300 `
                 + (hasChildren ? ' rounded-t-md' : ' rounded-md')
                 + (isSelected ? ' border-black' : ' ')
                 + (isClickable ? ' cursor-alias' : ' cursor-pointer')
+                + (isInProgress ? ` border-blue-500 bg-blue-100 animate-pulse` : '')
+                + (isFailed ? ` border-red-500 bg-red-100` : '')
             }
             onClick={props.onClick || (() => {
                 nav(`/execution-log/${props.id}`)
@@ -75,6 +84,13 @@ export function ExecutionLogScalfold (props: ExecutionLogScalfoldProps) {
             + (isSelected ? ' border-black' : ' border-gray-300')
         }>
             {props.children}
+            {props.statusMessage && 
+                <div className="text-red-500">
+                    <pre className="text-sm text-wrap text-sm break-words">
+                        {props.statusMessage}
+                    </pre>
+                </div>
+            }
         </div>
         <div className="flex justify-between p-1 text-sm text-gray-400">
             <div className="hover:text-gray-500 cursor-pointer hover:underline"

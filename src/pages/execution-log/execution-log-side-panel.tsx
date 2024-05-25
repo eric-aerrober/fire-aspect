@@ -25,8 +25,13 @@ export function ExecutionLogSidePanel () {
 
     if (event.type === EventType.TOOL_INVOKE) {
 
+        if (!fs.existsSync(event.content + '/input.json')) return 'input.json not found'
+        if (!fs.existsSync(event.content + '/result.json')) return 'result.json not found'
+        if (!fs.existsSync(event.content + '/output.txt')) return 'output.txt not found'
+
         const request = fs.readFileSync(event.content + '/input.json').toString()
         const result = fs.readFileSync(event.content + '/result.json').toString()
+        const output = fs.readFileSync(event.content + '/output.txt').toString()
 
         return <CenterPage>
             <PageScafold title="Tool was Invoked">
@@ -41,6 +46,13 @@ export function ExecutionLogSidePanel () {
                 <code>
                     <pre>
                         {JSON.stringify(JSON.parse(result), null, 4)}
+                    </pre>
+                </code>
+                <br />
+                Tool Output Logs:
+                <code>
+                    <pre>
+                        {output}
                     </pre>
                 </code>
             </PageScafold>

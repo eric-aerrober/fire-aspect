@@ -16,10 +16,10 @@ export function describeTools (integrations: ToolIntegrations) {
         const tool = integrations[toolId]
         return `
     
-            Id: [${toolId}]
+            Id: ${toolId}
             Name: ${tool.name}
             Description: ${tool.description}
-            Params: ${JSON.stringify(tool.params)}'
+            Params: ${JSON.stringify(tool.params)}
         `
     }
 

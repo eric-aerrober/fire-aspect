@@ -13,7 +13,7 @@ export function SplitPage(props: SplitPageProps) {
                 {props.left}
             </div>
             {
-                props.right && <div style={{flex: 1}} className="ml-4 border-l-2 border-gray-200 p-4 pl-8 bg-gray-50">
+                props.right && <div style={{flex: 1}} className=" overflow-y-auto ml-4 border-l-2 border-gray-200 p-4 pl-8 bg-gray-50">
                     {props.right}
                 </div>
             }

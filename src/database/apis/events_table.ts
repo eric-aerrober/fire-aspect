@@ -18,6 +18,7 @@ export const EventsTable = sqliteTable('EventsTable', DrizzleTableRecord({
     relatedRecords: text('relatedRecords'),
     content: text('content'),
     status: text('status').notNull().default(Status.INPROGRESS),
+    statusMessage: text('statusMessage'),
 }));
   
 export type EventTableElement =  TableRecord<{
@@ -26,4 +27,5 @@ export type EventTableElement =  TableRecord<{
     relatedRecords: string;
     content: string;
     status: Status;
+    statusMessage: string;
 }>

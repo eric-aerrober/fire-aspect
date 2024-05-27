@@ -15,7 +15,6 @@ export function describeTools (integrations: ToolIntegrations) {
     const describeTool = (toolId: string) => {
         const tool = integrations[toolId]
         return `
-    
             Id: ${toolId}
             Name: ${tool.name}
             Description: ${tool.description}

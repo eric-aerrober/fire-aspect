@@ -12,6 +12,8 @@ import { SettingsApi } from "./apis/settings_api"
 import { SettingsTable } from "./apis/settings_table"
 import { AgentsApi } from "./apis/agents_api"
 import { AgentsTable } from "./apis/agents_table"
+import { PromptsApi } from "./apis/prompts_api"
+import { PromptsDefinedTable } from "./apis/prompts_table"
 
 //@ts-ignore
 const DRIZZLE : any = window._db as any
@@ -23,5 +25,6 @@ export const DB = {
     conversations: new ConversationAPI(DRIZZLE, ConversationTable, 'conversations'),
     tools: new ToolApi(DRIZZLE, ToolDefinedTable, 'tools'),
     settings: new SettingsApi(DRIZZLE, SettingsTable, 'settings'),
-    agents: new AgentsApi(DRIZZLE, AgentsTable, 'agents')
+    agents: new AgentsApi(DRIZZLE, AgentsTable, 'agents'),
+    prompts: new PromptsApi(DRIZZLE, PromptsDefinedTable, 'prompts')
 }

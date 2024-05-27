@@ -8,7 +8,7 @@ export interface SplitPageProps {
 
 export function SplitPage(props: SplitPageProps) {
     return <UnPadContent>
-        <div className="flex h-full">
+        <div className="flex h-full overflow-y-none">
             <div style={{flex: 2}} className="p-4 overflow-y-auto pb-52">
                 {props.left}
             </div>

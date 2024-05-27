@@ -14,13 +14,13 @@ export interface IconSidebarParams  {
 export function IconSideBar (props: IconSidebarParams) {
 
     return <>
-        <div className="flex flex-row w-full">
+        <div className="">
             <div className="h-[100vh] w-[55px] bg-gray-100 border-r-2 border-gray-300 overflow-y-hidden">
                 {props.options.map(option => (
                     <IconSidebarOption {...option} key={option.tooltip}/>
                 ))}
             </div>
-            <div className="flex-1 p-4 h-[100vh]">
+            <div className="absolute p-4 h-[100vh] w-[calc(100%-55px)] top-0 left-[55px]">
                 <Outlet />
             </div>
         </div>

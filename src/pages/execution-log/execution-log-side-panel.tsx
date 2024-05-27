@@ -16,11 +16,7 @@ export function ExecutionLogSidePanel () {
     if (!event) return 'loading'
 
     if (event.type === EventType.CHAT_MODEL_RESPOND_MESSAGE && event.relatedRecords ) {
-        return <CenterPage>
-            <PageScafold title="Chat model was Invoked">
-                <ChatModelInvoke event={event} />
-            </PageScafold>
-        </CenterPage>
+        return <ChatModelInvoke event={event} />
     }
 
     if (event.type === EventType.TOOL_INVOKE) {
@@ -33,39 +29,33 @@ export function ExecutionLogSidePanel () {
         const result = fs.readFileSync(event.content + '/result.json').toString()
         const output = fs.readFileSync(event.content + '/output.txt').toString()
 
-        return <CenterPage>
-            <PageScafold title="Tool was Invoked">
-                Tool Request Parameters:
-                <code>
-                    <pre>
-                        {JSON.stringify(JSON.parse(request), null, 4)}
-                    </pre>
-                </code>
-                <br />
-                Tool Response Parameters:
-                <code>
-                    <pre>
-                        {JSON.stringify(JSON.parse(result), null, 4)}
-                    </pre>
-                </code>
-                <br />
-                Tool Output Logs:
-                <code>
-                    <pre>
-                        {output}
-                    </pre>
-                </code>
-            </PageScafold>
-        </CenterPage>
+        return <div>
+            Tool Request Parameters:
+            <code>
+                <pre>
+                    {JSON.stringify(JSON.parse(request), null, 4)}
+                </pre>
+            </code>
+            <br />
+            Tool Response Parameters:
+            <code>
+                <pre>
+                    {JSON.stringify(JSON.parse(result), null, 4)}
+                </pre>
+            </code>
+            <br />
+            Tool Output Logs:
+            <code>
+                <pre>
+                    {output}
+                </pre>
+            </code>
+        </div>
     }
 
-    return <CenterPage>
-        <PageScafold title="">
-            <div className="text-gray-500">
-                no additional information for this event
-            </div>
-        </PageScafold>
-    </CenterPage>
+    return <div className="text-gray-500">
+        no additional information for this event
+    </div>
 
 }
 

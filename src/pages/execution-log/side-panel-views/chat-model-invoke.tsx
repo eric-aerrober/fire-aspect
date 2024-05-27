@@ -24,9 +24,9 @@ export function ChatModelInvoke (props: {event: EventTableElement}) {
     return <div>
         {
             inputRaw.messages.map((message, i) => <div key={i} className="p-2 mb-2 bg-white border rounded ">
-                <div className="text-sm text-black font-bold">{message.sender}</div>
-                <div className="text-md">
-                    <pre className="text-black wrap text-wrap text-sm break-words border-none bg-white p-2">
+                <div className="text-xs text-black font-bold">{message.sender}</div>
+                <div className="text-xs">
+                    <pre className="text-black wrap text-wrap text-xs break-words border-none bg-white p-2">
                         {fixFormatting(message.message)}
                     </pre>
                 </div>
@@ -38,10 +38,10 @@ export function ChatModelInvoke (props: {event: EventTableElement}) {
         {
             
             <div className="p-2 mt-2 bg-white text-black border rounded ">
-                <div className="text-md">
+                <div className="text-xs">
                     
                     {
-                        responseJson ? <pre className="text-black wrap text-wrap text-sm break-words border-none bg-white p-2">
+                        responseJson ? <pre className="text-black wrap text-wrap text-xs break-words border-none bg-white p-2">
                             {JSON.stringify(responseJson, null, 4)}
                         </pre>
                         : relatedRaw.message

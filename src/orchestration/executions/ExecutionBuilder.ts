@@ -27,6 +27,11 @@ function buildConversationHistoryFromEvents (events: EventTableElement[]) {
                 sender: 'agent',
                 message: event.content
             })
+        } else if (event.type === EventType.WORKFLOW_ROOT_EVENT) {
+            conversationHistory.push({
+                sender: 'agent',
+                message: event.content
+            })
         }
     }
 

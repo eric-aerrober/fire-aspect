@@ -47,7 +47,7 @@ export class ExecutionContext<StoredState> {
 
     // Conversation history
 
-    public getConversationHistory () {
+    public getConversationHistory () : ConversationHistoryMessage[] {
         const resultHistory = []
         for (const message of this.conversationHistory) {
 
@@ -57,11 +57,11 @@ export class ExecutionContext<StoredState> {
                 resultHistory.push(message)
             }
             else if (lastIsAgent && message.sender == 'agent') {
-                resultHistory.push({sender: 'user', message: '[message blank]'})
+                resultHistory.push({sender: 'user', message: '[message blank]'} as ConversationHistoryMessage)
                 resultHistory.push(message)
             }
             else if (!lastIsAgent && message.sender == 'user') {
-                resultHistory.push({sender: 'agent', message: '[message blank]'})
+                resultHistory.push({sender: 'agent', message: '[message blank]'} as ConversationHistoryMessage)
                 resultHistory.push(message)
             }
             else {

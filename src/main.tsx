@@ -29,6 +29,7 @@ import { AgentsPage } from './pages/agents/agents-page';
 import { AgentsConfigurePage } from './pages/agents/agents-configure';
 import { CreateNewChatPage } from './pages/chat/chat-create-new-chat-page';
 import { CreateNewAgentChatPage } from './pages/chat/chat-create-new-agent-page';
+import { PopulateDatabase } from './database/populate';
 
 const topLevelSidebar = <IconSideBar options={[
   {
@@ -111,12 +112,13 @@ const router = createBrowserRouter([
   }
 ]);
 
-
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <RouterProvider router={router} />
   </React.StrictMode>,
 )
+
+PopulateDatabase()
 
 postMessage({ payload: 'removeLoading' }, '*')
   

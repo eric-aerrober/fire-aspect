@@ -1,5 +1,5 @@
-import { DB } from "../../../database/database";
-import { InvokeToolAsBashScript } from "../RunTool";
+import { DB } from "../../../../database/database";
+import { InvokeToolAsBashScript } from "../../RunTool";
 
 export async function InvokeNodeJSTool (id: string, workspacePath: string) {
 

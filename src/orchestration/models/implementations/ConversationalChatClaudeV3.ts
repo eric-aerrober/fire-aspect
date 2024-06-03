@@ -33,7 +33,7 @@ export class ClaudeV3ConversationalChatModel extends ConversationalChatModel {
                     content: [
                         {
                             type: 'text',
-                            text: message.message
+                            text: message.message.trim()
                         }
                     ]
                 })),
@@ -42,7 +42,7 @@ export class ClaudeV3ConversationalChatModel extends ConversationalChatModel {
         })
 
         const responseJson = await response.json();
-        
+
         return {
             message: responseJson.content[0].text,
         };

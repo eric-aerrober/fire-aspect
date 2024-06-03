@@ -34,11 +34,11 @@ export function fixFormatting (str: string): string {
     return str.split('\n').map(fixLine).join('\n')
 }
 
-export function extractObject (str: string) {
+export function extractObject<T> (str: string) {
     try {
         const start = str.indexOf('{');
         const end = str.lastIndexOf('}');
-        return JSON.parse(str.substring(start, end + 1));
+        return JSON.parse(str.substring(start, end + 1)) as T;
     }
     catch {
         return undefined;

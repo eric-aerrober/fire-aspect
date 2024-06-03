@@ -1,17 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { CenterPage } from "../../components/layout/Center";
-import { LabeledSection } from "../../components/layout/LabeledSection";
 import { PageScafold } from "../../components/layout/PageScafold";
-import { useListenItem, useListenTableItems } from "../../database/hooks";
+import { useListenItem, useListenQuery, useListenTableItems } from "../../database/hooks";
 import { ToolDefinedTableElement } from "../../database/apis/tools_table";
-import { ToolIntegrationDefinitions, ToolIntegrationType } from "../../orchestration/tools/ToolIntegrationOptions";
-import { TableElm } from "../../components/tables/Table";
 import { DB } from "../../database/database";
-import { useEffect, useState } from "react";
-import { ModelIntegrationType, integrationDefinedForModel } from "../../orchestration/models/ModelIntegrationOptions";
+import { ModelIntegrationType } from "../../orchestration/models/ModelIntegrationOptions";
 import { LabeldInputOption } from "../../components/inputs/LabeledInputOption";
-import { Right } from "../../components/layout/Right";
-import { DeleteButton, PrimaryButton, SecondaryButton } from "../../components/inputs/Buttons";
 import { AgentsTableElement } from "../../database/apis/agents_table";
 import { Label } from "../../components/key-value";
 import { Textarea } from "@tremor/react";
@@ -26,7 +20,8 @@ export function AgentsConfigurePage () {
 
     const agentWithId = useListenItem<AgentsTableElement>('agents', id);
     const integratedModels = useListenTableItems<IntegrationTableElement>('integrations')
-    const definedTools = useListenTableItems<ToolDefinedTableElement>('tools')
+    const currentToolsUser = useListenQuery<ToolDefinedTableElement[]>('tools', () => DB.tools.userCreated(), []);
+    const currentToolsSystem = useListenQuery<ToolDefinedTableElement[]>('tools', () => DB.tools.systemCreated(), []);
     const defiendAgents = useListenTableItems<AgentsTableElement>('agents')
 
     const chatModels = (integratedModels || [])
@@ -42,8 +37,30 @@ export function AgentsConfigurePage () {
         return <div>Invalid Integration</div>
     }
 
-    if (!agentWithId || !integratedModels || !definedTools || !defiendAgents)
+    if (!agentWithId || !integratedModels || !currentToolsUser ||!currentToolsSystem || !defiendAgents)
         return <div>Loading...</div>
+
+    function RenderTools (tools: ToolDefinedTableElement[]) {
+        if (tools.length == 0) return <div><br/><br/></div>
+        return tools.map((tool) => {
+            const toolsParsed: string[] = JSON.parse(agentWithId!.tools || '[]')
+            const checked = toolsParsed.includes(tool.id)
+            return <div key={tool.id} className={
+                `flex items-center rounded border-gray-100 hover:border-gray-300 border p-2 cursor-pointer w-fit capitalize px-3 ${checked ? 'bg-indigo-100 ' : ''}`
+            } onClick={() => {
+                if (checked) {
+                    DB.agents.update({id: id!, tools: JSON.stringify(toolsParsed.filter(t => t != tool.id))})
+                } else {
+                    DB.agents.update({id: id!, tools: JSON.stringify([...toolsParsed, tool.id])})
+                }
+            }}> 
+                <div className="mr-2">
+                    { checked ? <CheckIcon size={20} color="purple" /> : <CheckIcon size={20} color="lightgray" /> }
+                </div>
+                {tool.name}
+            </div>
+        })
+    }
 
     return <CenterPage width="1000px">
         <PageScafold 
@@ -61,10 +78,10 @@ export function AgentsConfigurePage () {
                 placeholder="Name"
             />
             <SelectOneOf
-                selected={agentWithId.model || 'none'}
+                selected={agentWithId.modelId || 'none'}
                 label="Choose a chat model" 
                 options={chatModelOptions} 
-                onSelect={option => DB.agents.update({id, model: option})}
+                onSelect={option => DB.agents.update({id, modelId: option})}
             />
             
             <Label label="System Prompt" />
@@ -76,29 +93,19 @@ export function AgentsConfigurePage () {
             />
 
             <br/>
-            <Label label="Accessable Tools" />
+            <Label label="Accessable User Tools" />
             <div className="flex gap-2">
             {
-                definedTools.map((tool) => {
-                    const toolsParsed: string[] = JSON.parse(agentWithId.tools || '[]')
-                    const checked = toolsParsed.includes(tool.id)
-                    return <div key={tool.id} className={
-                        `flex items-center rounded border-gray-100 hover:border-gray-300 border p-2 cursor-pointer w-fit capitalize px-3 ${checked ? 'bg-indigo-100 ' : ''}`
-                    } onClick={() => {
-                        if (checked) {
-                            DB.agents.update({id, tools: JSON.stringify(toolsParsed.filter(t => t != tool.id))})
-                        } else {
-                            DB.agents.update({id, tools: JSON.stringify([...toolsParsed, tool.id])})
-                        }
-                    }}> 
-                        <div className="mr-2">
-                            { checked ? <CheckIcon size={20} color="purple" /> : <CheckIcon size={20} color="lightgray" /> }
-                        </div>
-                        {tool.name}
-                    </div>
-                })
+                RenderTools(currentToolsUser)
             }
             </div>
+
+            <Label label="Accessable System Tools" />
+            <div className="flex gap-2">
+            {
+                RenderTools(currentToolsSystem)
+            }
+            </div>  
 
             <br/>
 

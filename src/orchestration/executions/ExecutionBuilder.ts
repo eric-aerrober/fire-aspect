@@ -93,7 +93,8 @@ export async function contextFromConversation (conversationData: ExecutionContex
         rootEvent,
         conversationHistory: buildConversationHistoryFromEvents(events),
         storedState: {},
-        tools: tools
+        tools: tools,
+        contextVariables: {}
     })
 
 }

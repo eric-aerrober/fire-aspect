@@ -1,7 +1,13 @@
 import { NodeJSLogo } from "../../components/logos/node";
 
+export enum ToolOwnerType {
+    USER = 'USER',
+    SYSTEM = 'SYSTEM'
+}
+
 export enum ToolIntegrationType {
     NODEJS_SCRIPT = 'node-js-script',
+    SYSTEM = 'system'
 }
 
 export const ToolIntegrationDefinitions = {

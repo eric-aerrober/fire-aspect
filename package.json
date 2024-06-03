@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "start": "electron-rebuild -f -w better-sqlite3 && vite",
-    "dev-prompts": "npm rebuild better-sqlite3 && node ./scripts/prompt-hotload.ts",
     "drizzle": "npm rebuild better-sqlite3 && drizzle-kit push:sqlite",
     "postinstall": "electron-builder install-app-deps",
     "docs": "docsify serve ./docs"

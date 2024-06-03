@@ -25,6 +25,10 @@ export class APIWrapper <TableSpec extends TableRecord<{}>, T extends SQLiteTabl
         return this.db.select().from(this.table).orderBy(desc(this.table.creationDate))
     }
 
+    public async exists(id: string) {
+        return (await this.get(id)) != null
+    }
+
     public async get(id: string) {
         const result = await this.db
             .select()

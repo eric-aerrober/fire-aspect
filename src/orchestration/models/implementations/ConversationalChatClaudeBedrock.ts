@@ -35,7 +35,7 @@ export class ClaudeV3BedrockConversationalChatModel extends ConversationalChatMo
                     content: [
                         {
                             type: 'text',
-                            text: message.message
+                            text: message.message.trim()
                         }
                     ]
                 })),
@@ -47,6 +47,8 @@ export class ClaudeV3BedrockConversationalChatModel extends ConversationalChatMo
         const invokeModelOutput = await bedrockClient.send(invokeModelCommand);
         const resultString = Buffer.from(invokeModelOutput.body as Uint8Array).toString('utf-8');
         const result = JSON.parse(resultString);
+
+        console.log(result)
 
         return {
             message: result.content[0].text

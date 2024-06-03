@@ -26,7 +26,7 @@ export function ToolsAddPage () {
             description: 'Description of parameter'
         }
     ]);
-    const definedTool = ToolIntegrationDefinitions[id as ToolIntegrationType];
+    const definedTool = ToolIntegrationDefinitions[(id as unknown) as ToolIntegrationType.NODEJS_SCRIPT];
 
     if (!id || !definedTool) {
         nav('/tools')
@@ -39,6 +39,7 @@ export function ToolsAddPage () {
             name: name.replace(/ /g, '-').toLowerCase(),
             description,
             toolType: id,
+            owner: 'USER',
             toolConfig: JSON.stringify(params),
             toolParams: JSON.stringify(arguements)
         })

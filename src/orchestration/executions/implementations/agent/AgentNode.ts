@@ -6,13 +6,23 @@ import { ExecutionContext } from "../../ExecutionContext";
 import { ExecutionNode } from "../../ExecutionNode";
 import { AgentTakeActionNode } from "./AgentTakeActionNode";
 import { ChatModelRespondExecutionNode } from "../ChatModelRespondNode";
+import { ChatModelObjectResponseNode } from "../ChatModelObjectNode";
 
 export interface AgentExecutionNodeInputState {
     direction: string
 }
 
 export interface AgentExecutionNodeResultState {
-    chatResponse: string
+    actions: {
+        action: string,
+        details: string
+        variables: {
+            id: string
+            description: string
+        }[]
+    }[],
+    summary: string
+    status: 'success' | 'failure'
 }
 
 interface AssessResultsObject {
@@ -21,9 +31,10 @@ interface AssessResultsObject {
     results: string
     determiner: string
     summary: string
-    achieved: string
+    status: string
     response: string
 }
+
 
 export class AgentExecutionNode extends ExecutionNode<AgentExecutionNodeInputState, AgentExecutionNodeResultState> {
 
@@ -39,7 +50,7 @@ export class AgentExecutionNode extends ExecutionNode<AgentExecutionNodeInputSta
         // Build a new conversation context for this agent
         const systemPrompt = await AgentExecutionNode.PROMPT.loadPrompt('system', {
             context: JSON.stringify(context.getConversationHistory(), null, 2),
-            direction: context.state.direction
+            directions: context.state.direction
         })
 
         const agentContext = context
@@ -48,7 +59,6 @@ export class AgentExecutionNode extends ExecutionNode<AgentExecutionNodeInputSta
 
         // Now we start to solve the problem step by step, up to N steps
         let loopContext : ExecutionContext<{}> = agentContext;
-        let resultMessage: AssessResultsObject | undefined = undefined;
 
         for (let i = 0; i < 5; i++) {
 
@@ -66,35 +76,44 @@ export class AgentExecutionNode extends ExecutionNode<AgentExecutionNodeInputSta
                 throw new Error('Failed to extract message from agent response')
             }
 
-            // Are we done?
-            if (message?.achieved === 'yes') {
-                resultMessage = message
-                break
+            // Are we still ongoing?
+            if (message.status === 'inprogress') {
+                const afterAssessment = await AgentExecutionNode.PROMPT.loadPrompt('after-assessment', {
+                    response: message.response,
+                    status: message.status
+                })
+                loopContext = invokeResult
+                    .addUserMessage(afterAssessment)
+                    .makeChildOf(context)
+                continue
             }
 
-            // Else itterate with a summary of why we failed assessment
-            const afterAssessment = await AgentExecutionNode.PROMPT.loadPrompt('after-assessment', {
-                response: message.response
-            })
+            // If we are complete, break
             loopContext = invokeResult
-                .addUserMessage(afterAssessment)
+            break;
+            
         }
 
-        if (!resultMessage) {
-            throw new Error('Failed to achieve goal')
+        // Then build the summary response
+        const afterAssessment = await AgentExecutionNode.PROMPT.loadPrompt('build-response')
+        const responseObject = await new ChatModelObjectResponseNode<AgentExecutionNodeResultState>()
+            .invoke(loopContext.addUserMessage(afterAssessment))
+
+        if (!responseObject) {
+            throw new Error('Failed to extract response object')
         }
 
-        // Then return results as a summary
-        const afterAssessment = await AgentExecutionNode.PROMPT.loadPrompt('after-complete', {
-            response: resultMessage.response,
-            actions: resultMessage.results
+        // Provide finalr response
+        const afterResponse = await AgentExecutionNode.PROMPT.loadPrompt('after-complete', {
+            goal: context.state.direction,
+            actions: JSON.stringify(responseObject.state.actions, null, 2),
+            status: responseObject.state.status,
+            response: responseObject.state.summary
         })
 
-        return context
-            .addUserMessage(afterAssessment)
-            .mergeState({
-                chatResponse: resultMessage.response
-            })
+        return loopContext
+            .addUserMessage(afterResponse)
+            .mergeState(responseObject.state)
 
     }
 }

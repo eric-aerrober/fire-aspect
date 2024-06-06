@@ -6,15 +6,17 @@ import { Status } from "../../database/enums"
 import { BuildIntegrations } from "../models/IntegrationBuilder"
 import { ToolIntegrations } from "../tools/ToolIntegration"
 import { ConversationHistoryMessage, ExecutionContext } from "./ExecutionContext"
+import { ExecutionVariable } from "./ExecutionVariable"
 
 export interface ExecutionContextofRespondConversation {
     conversationId: string,
     type?: EventType
 }
 
-function buildConversationHistoryFromEvents (events: EventTableElement[]) {
+async function buildConversationHistoryFromEvents (events: EventTableElement[]) {
 
     const conversationHistory : ConversationHistoryMessage[] = []
+    const discoveredVariables : Record<string, ExecutionVariable> = {}
 
     for (const event of events) {
         if (event.type === EventType.USER_CHAT_MESSAGE) {
@@ -28,14 +30,31 @@ function buildConversationHistoryFromEvents (events: EventTableElement[]) {
                 message: event.content
             })
         } else if (event.type === EventType.WORKFLOW_ROOT_EVENT) {
+            const variables = await DB.variables.getVariablesForEvent(event.id)
+
+            if (variables) {
+                for (const variable of variables) {
+                    discoveredVariables[variable.id] = {
+                        name: variable.id,
+                        description: variable.description,
+                        type: variable.kind,
+                        value: variable.content
+                    }
+                }
+            }
+
             conversationHistory.push({
                 sender: 'agent',
-                message: event.content
+                message: event.content + '\n\n' + JSON.stringify(variables.map(v => ({
+                    id: v.id,
+                    kind: v.kind,
+                    description: v.description,
+                })))
             })
         }
     }
 
-    return conversationHistory
+    return {conversationHistory, discoveredVariables}
 }
 
 async function getIntegrationsFromConversation (conversation: ConversationTableElement) {
@@ -79,6 +98,9 @@ export async function contextFromConversation (conversationData: ExecutionContex
     const events = await DB.events.allFromConversation(conversationData.conversationId)
     const tools = await getToolsForConversation(conversationObj)
 
+    // Build the conversation history
+    const conversationHistory = await buildConversationHistoryFromEvents(events)
+
     // Add in the root event reference
     const rootEvent = await DB.events.create({
         parentId: conversationData.conversationId,
@@ -91,10 +113,10 @@ export async function contextFromConversation (conversationData: ExecutionContex
     return new ExecutionContext({
         integrations: BuildIntegrations([targetIntegration]),
         rootEvent,
-        conversationHistory: buildConversationHistoryFromEvents(events),
+        conversationHistory: conversationHistory.conversationHistory,
         storedState: {},
         tools: tools,
-        contextVariables: {}
+        contextVariables: conversationHistory.discoveredVariables
     })
 
 }

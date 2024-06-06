@@ -14,6 +14,8 @@ import { AgentsApi } from "./apis/agents_api"
 import { AgentsTable } from "./apis/agents_table"
 import { PromptsApi } from "./apis/prompts_api"
 import { PromptsDefinedTable } from "./apis/prompts_table"
+import { VariablesAPI } from "./apis/variables_api"
+import { VariableTable } from "./apis/variables_table"
 
 //@ts-ignore
 const DRIZZLE : any = window._db as any
@@ -26,5 +28,6 @@ export const DB = {
     tools: new ToolApi(DRIZZLE, ToolDefinedTable, 'tools'),
     settings: new SettingsApi(DRIZZLE, SettingsTable, 'settings'),
     agents: new AgentsApi(DRIZZLE, AgentsTable, 'agents'),
-    prompts: new PromptsApi(DRIZZLE, PromptsDefinedTable, 'prompts')
+    prompts: new PromptsApi(DRIZZLE, PromptsDefinedTable, 'prompts'),
+    variables: new VariablesAPI(DRIZZLE, VariableTable, 'variables')
 }

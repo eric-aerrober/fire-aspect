@@ -31,7 +31,7 @@ export class ExecutionContext<StoredState> {
     public readonly tools: ToolIntegrations
 
     // The root event of this context, what created it
-    public readonly rootEvent: EventTableElement
+    public rootEvent: EventTableElement
 
     // Conversation history, what has been said so far
     private conversationHistory: ConversationHistoryMessage[];
@@ -239,6 +239,17 @@ export class ExecutionContext<StoredState> {
         return new ExecutionContext({
             integrations: this.integrations,
             rootEvent: newRootNode,
+            conversationHistory: deepCopy(this.conversationHistory),
+            storedState: deepCopy(this.storedState),
+            tools: this.tools,
+            contextVariables: this.contextVariables
+        })
+    }
+
+    public makeChildOf (parent: ExecutionContext<any>) {
+        return new ExecutionContext({
+            integrations: this.integrations,
+            rootEvent: parent.rootEvent,
             conversationHistory: deepCopy(this.conversationHistory),
             storedState: deepCopy(this.storedState),
             tools: this.tools,

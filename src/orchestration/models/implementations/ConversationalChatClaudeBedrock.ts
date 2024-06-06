@@ -48,8 +48,6 @@ export class ClaudeV3BedrockConversationalChatModel extends ConversationalChatMo
         const resultString = Buffer.from(invokeModelOutput.body as Uint8Array).toString('utf-8');
         const result = JSON.parse(resultString);
 
-        console.log(result)
-
         return {
             message: result.content[0].text
         }

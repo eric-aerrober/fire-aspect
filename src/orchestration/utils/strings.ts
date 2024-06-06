@@ -40,7 +40,9 @@ export function extractObject<T> (str: string) {
         const end = str.lastIndexOf('}');
         return JSON.parse(str.substring(start, end + 1)) as T;
     }
-    catch {
+    catch (e) {
+        console.error(str)
+        console.error(e);
         return undefined;
     }
 }

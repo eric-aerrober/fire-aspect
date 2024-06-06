@@ -5,6 +5,8 @@ import Graph from 'remixicon-react/FlowChartIcon'
 import { useNavigate } from "react-router-dom";
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { useListenQuery, useListenTableItems } from "../../database/hooks";
+import { DB } from "../../database/database";
 
 export interface ChatSectionProps {
     event: EventTableElement
@@ -66,24 +68,41 @@ export function ChatSection (props: ChatSectionProps) {
 function ChatSectionScafold (props: ChatSectionScafoldProps) {
     const nav = useNavigate()
 
-    return <div className="flex flex-col p-2 hover:bg-gray-50 rounded">
-        <div className="text-sm text-gray-500 flex justify-between w-full">
-            {props.title}
-            <div>
-                {
-                    props.showEvent && <Graph 
-                        size={24} 
-                        color={'#ddd'} 
-                        className="text-gray-500 hover:bg-black rounded p-1 cursor-pointer" 
-                        key="graph-viz" 
-                        onClick={() => nav(`/execution-log/${props.showEvent}`)} 
-                    />
-                }
-                {props.relations}
+    const owningVariables = useListenQuery('variables', () => DB.variables.getVariablesForEvent(props.showEvent || ''), [props.showEvent]) || []
+
+    return <div className="p-1">
+        <div className="flex flex-col hover:bg-gray-50 rounded p-2">
+            <div className="text-sm text-gray-500 flex justify-between w-full">
+                {props.title}
+                <div>
+                    {
+                        props.showEvent && <Graph 
+                            size={24} 
+                            color={'#ddd'} 
+                            className="text-gray-500 hover:bg-black rounded p-1 cursor-pointer" 
+                            key="graph-viz" 
+                            onClick={() => nav(`/execution-log/${props.showEvent}`)} 
+                        />
+                    }
+                    {props.relations}
+                </div>
+            </div>
+            <div className="text-lg">
+                {props.status === Status.INPROGRESS ? <Spinner /> : props.children}
             </div>
         </div>
-        <div className="text-lg">
-            {props.status === Status.INPROGRESS ? <Spinner /> : props.children}
-        </div>
+        {
+            owningVariables.length > 0 && <div className="flex py-2 gap-2">
+                {
+                    owningVariables.map((variable, index) => {
+                        return <div key={index} className="flex flex-col space-y-1 p-2 bg-gray-50 border rounded hover:bg-gray-100 cursor-pointer"
+                            onClick={() => nav(`/database/variables/${variable.id}`)}>
+                            <div className="text-xs text-gray-500">{variable.kind}</div>
+                            <div className="text-sm">{variable.description}</div>
+                        </div>
+                    })
+                }
+            </div>
+        }
     </div>
 }

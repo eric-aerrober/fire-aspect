@@ -16,7 +16,7 @@ export class PromptStore {
         const fullPrompt = await DB.prompts.get(promptId);
     
         if (!fullPrompt) {
-            throw new Error('Prompt not found');
+            throw new Error('Prompt not found: ' + promptId);
         }
     
         let prompt = fullPrompt.content;

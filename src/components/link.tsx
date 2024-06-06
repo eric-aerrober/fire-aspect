@@ -16,6 +16,5 @@ export function Link ({ small, href, children }: { href: string, children: React
 
 export function LinkToId (ref: string) {
     const [table, id] = ref.split('::')
-    console.log(`/database/${table}/${ref}`)
     return <Link href={`/database/${table}/${ref}`}>{table}:{id?.substring(0,5)}</Link>
 }

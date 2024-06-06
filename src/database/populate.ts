@@ -35,6 +35,23 @@ export async function PopulateDatabase () {
         ]
     })
 
+    DB.tools.createNewSystemTool({
+        name: 'describe-workspace',
+        description: 'A tool that invokes another bot to go through the workspace and describe what it finds',
+        toolType: ToolIntegrationType.SYSTEM,
+        toolConfig: {},
+        toolParams: [
+            {
+                name: 'targetEnv',
+                description: 'The environment to write the file to. Should be a "system-env" type variable',
+            },
+            {
+                name: 'goal',
+                description: 'A natural language goal of what we are looking for to direct the search. IE: "learn more about the websocket implementation" or "i need to add a new api route"',
+            }
+        ]
+    })
+
     await loadAllPrompt()
 
 }

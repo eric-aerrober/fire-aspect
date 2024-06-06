@@ -5,7 +5,7 @@ import { PromptStore } from "../../../prompts/PromptStore";
 import { describeTools } from "../../../tools/ToolIntegration";
 import { ChatModelRespondExecutionNode } from "../ChatModelRespondNode";
 import { extractObject } from "../../../utils/strings";
-import { ToolInvokeExecutionNode } from "../ToolInvokeNode";
+import { ToolInvokeExecutionNode } from "../tool-nodes/ToolInvokeNode";
 import { ExecutionVariable } from "../../ExecutionVariable";
 
 export interface AgentActionNodeInputState {}

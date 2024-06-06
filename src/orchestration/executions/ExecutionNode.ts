@@ -20,6 +20,7 @@ export class ExecutionNode <InputExecutionState, OutputExecutionState> {
             return invokedInternal;
         } catch (e) {
             if (e instanceof Error) {
+                console.error(e.message + '\n' + e.stack);
                 await executionContext.failContext(e.message + '\n' + e.stack);
                 await context.failContext("Child node failed unrecoverably");
             }
